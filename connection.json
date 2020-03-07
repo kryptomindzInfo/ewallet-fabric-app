@@ -1,0 +1,75 @@
+{
+	"name": "siliconvalley-network",
+	"version": "1.0.0",
+	"client": {
+		"organization": "SiliconValley",
+		"connection": {
+			"timeout": {
+				"peer": {
+					"endorser": "300"
+				},
+				"orderer": "300"
+			}
+		}
+	},
+	"channels": {
+		"ewalletchannel": {
+			"orderers": ["orderer.siliconvalley.com"],
+			"peers": {
+				"peer1.siliconvalley.com": {},
+				"peer2.siliconvalley.com": {}
+			}
+		}
+	},
+	"organizations": {
+		"SiliconValley": {
+			"mspid": "SiliconValleyMSP",
+			"fullpath": true,
+			"adminPrivateKey": {
+		  "path": "/opt/crypto/peerAdminMSP/keystore/43be4e8ac56de9e75a2e87569ee28129e3d7ece4a60921446d2eb14fad219f2b_sk"
+			},
+			"signedCert": {
+				"path": "/opt/crypto/peerAdminMSP/signcerts/Admin@siliconvalley.com-cert.pem"
+			},
+			"peers": ["peer1.siliconvalley.com","peer2.siliconvalley.com"],
+			"certificateAuthorities": ["ca.siliconvalley.com"]
+		}
+	},
+	"orderers": {
+		"orderer.siliconvalley.com": {
+			"url": "grpcs://siliconvalley-orderer-clusterip:30750",
+			"grpcOptions": {
+				"ssl-target-name-override": "siliconvalley-orderer-clusterip"
+			},
+			"tlsCACerts": {
+				"path": "/opt/crypto/ordererTls/ca.crt"
+			}
+		}
+	},
+	"peers": {
+		"peer1.siliconvalley.com": {
+			"url": "grpcs://siliconvalley-peer1-clusterip:30751",
+			"tlsCACerts": {
+				"path": "/opt/crypto/peer1Tls/ca.crt"
+			},
+			"grpcOptions": {
+				"ssl-target-name-override": "siliconvalley-peer1-clusterip"
+			}
+		},
+		"peer2.siliconvalley.com": {
+			"url": "grpcs://siliconvalley-peer2-clusterip:30851",
+			"tlsCACerts": {
+				"path": "/opt/crypto/peer2Tls/ca.crt"
+			},
+			"grpcOptions": {
+				"ssl-target-name-override": "siliconvalley-peer2-clusterip"
+			}
+		}
+	},
+	"certificateAuthorities": {
+		"ca.siliconvalley.com": {
+			"url": "http://siliconvalley-ca-clusterip:7054",
+			"caName": "ca.siliconvalley.com"
+		}
+	}
+}
