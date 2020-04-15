@@ -26,3 +26,4 @@ router.post('/disburseEWallet', dapp.disburse_ewallet);
 router.get('/showEWalletBalance', dapp.show_ewallet_balance);
 router.get('/getEWalletStatement', dapp.get_ewallet_statement);
 router.get('/getEWalletTransactionCount', dapp.get_transaction_count_of_ewallet);
+router.get('/getChildIds', dapp.get_child_ids);
