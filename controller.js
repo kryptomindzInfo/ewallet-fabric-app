@@ -20,7 +20,7 @@ const ccpPath = path.join(process.cwd(), connection_file);
 const ccpJSON = fs.readFileSync(ccpPath, "utf8");
 const ccp = JSON.parse(ccpJSON);
 
-exports.create_ewallet = async function(req, res, _next) {
+exports.create_ewallet = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 	const type = req.body.type;
 	const remarks = req.body.remarks;
@@ -33,7 +33,11 @@ exports.create_ewallet = async function(req, res, _next) {
 	try {
 		// Create a new gateway for connecting to our peer node.
 		const gateway = new Gateway();
-		await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 
 		// Get the network (channel) our contract is deployed to.
 		const network = await gateway.getNetwork(channelName);
@@ -41,14 +45,14 @@ exports.create_ewallet = async function(req, res, _next) {
 		// Get the contract from the network.
 		const contract = network.getContract(contractName);
 
-        // Submit the specified transaction.
-		console.log("\nSubmit Create Wallet transaction with arguments", walletId, type, remarks);
-		if (remarks != undefined) {
-			await contract.submitTransaction("createWallet", walletId, type, remarks);
-		} else {
-			await contract.submitTransaction("createWallet", walletId, type);
-		}
-
+		// Submit the specified transaction.
+		console.log(
+			"\nSubmit Create Wallet transaction with arguments",
+			walletId,
+			type,
+			remarks
+		);
+		await contract.submitTransaction("createWallet", walletId, type, remarks);
 		// Disconnect from the gateway.
 		gateway.disconnect();
 		var response = { status: 1, message: "EWallet Created Successfully" };
@@ -68,7 +72,7 @@ exports.create_ewallet = async function(req, res, _next) {
 	}
 };
 
-exports.recharge_ewallet = async function(req, res, _next) {
+exports.recharge_ewallet = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 	const amount = req.body.amount;
 	const remarks = req.body.remarks;
@@ -81,18 +85,23 @@ exports.recharge_ewallet = async function(req, res, _next) {
 	try {
 		// Create a new gateway for connecting to our peer node.
 		const gateway = new Gateway();
-		await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 		// Get the network (channel) our contract is deployed to.
 		const network = await gateway.getNetwork(channelName);
 		// Get the contract from the network.
 		const contract = network.getContract(contractName);
 
 		console.log("\n Submit recharge EWallet transaction ");
-		if (remarks != undefined) {
-			await contract.submitTransaction("rechargeWallet", walletId, amount, remarks);
-		} else {
-			await contract.submitTransaction("rechargeWallet", walletId, amount);
-		}
+		await contract.submitTransaction(
+			"rechargeWallet",
+			walletId,
+			amount,
+			remarks
+		);
 
 		// Disconnect from the gateway.
 		gateway.disconnect();
@@ -113,40 +122,58 @@ exports.recharge_ewallet = async function(req, res, _next) {
 	}
 };
 
-exports.transfer_btw_ewallets = async function(req, res, _next) {
-	const walletId1 = req.body.wallet_id1;
-  const walletId2 = req.body.wallet_id2;
-  const amount = req.body.amount;
-  const remarks = req.body.remarks;
-  const masterId = req.body.master_id
-  const childId = req.body.child_id
-  console.log(req.body)
+exports.transfer_btw_ewallets = async function (req, res, _next) {
+	const walletId1 = req.body.wallet_from;
+	const walletId2 = req.body.wallet_to;
+	const fromName = req.body.from_name;
+	const toName = req.body.to_name;
+	const txUserId = req.body.user_id;
+	const amount = req.body.amount;
+	const remarks = req.body.remarks;
+	const masterId = req.body.master_id;
+	const childId = req.body.child_id;
+	console.log(req.body);
 
-  // Create a new file system based wallet for managing identities.
-  const walletPath = path.join(process.cwd(), "/wallet");
-  const wallet = new FileSystemWallet(walletPath);
-  console.log(`Wallet path: ${walletPath}`);
+	// Create a new file system based wallet for managing identities.
+	const walletPath = path.join(process.cwd(), "/wallet");
+	const wallet = new FileSystemWallet(walletPath);
+	console.log(`Wallet path: ${walletPath}`);
 
-  try {
-    // Create a new gateway for connecting to our peer node.
-    const gateway = new Gateway();
-    await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+	try {
+		// Create a new gateway for connecting to our peer node.
+		const gateway = new Gateway();
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 
-    // Get the network (channel) our contract is deployed to.
-    const network = await gateway.getNetwork(channelName);
+		// Get the network (channel) our contract is deployed to.
+		const network = await gateway.getNetwork(channelName);
 
-    // Get the contract from the network.
-    const contract = network.getContract(contractName);
+		// Get the contract from the network.
+		const contract = network.getContract(contractName);
 
-    console.log("\nsubmit transfer between wallets transaction");
-    if (remarks != undefined) {
-      await contract.submitTransaction("transferBtwWallets", walletId1, walletId2, amount, masterId, childId, remarks,);
-    } else {
-      await contract.submitTransaction("transferBtwWallets", walletId1, walletId2, amount, masterId, childId);
-    }
+		console.log("\nsubmit transfer between wallets transaction");
+		await contract.submitTransaction(
+			"transferBtwWallets",
+			walletId1,
+			walletId2,
+			amount,
+			masterId,
+			childId,
+			txUserId,
+			fromName,
+			toName,
+			remarks
+		);
 		// Disconnect from the gateway.
 		gateway.disconnect();
-		var response = { status: 1, message: "Transferred Successfully", data: { master_id: masterId, child_id: childId}};
+		var response = {
+			status: 1,
+			message: "Transferred Successfully",
+			data: { master_id: masterId, child_id: childId },
+		};
 		console.log("\nTransaction success, send response: ", response);
 		res.send(response);
 	} catch (err) {
@@ -163,7 +190,7 @@ exports.transfer_btw_ewallets = async function(req, res, _next) {
 	}
 };
 
-exports.disburse_ewallet = async function(req, res, _next) {
+exports.disburse_ewallet = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 	const amount = req.body.amount;
 	const remarks = req.body.remarks;
@@ -176,7 +203,11 @@ exports.disburse_ewallet = async function(req, res, _next) {
 	try {
 		// Create a new gateway for connecting to our peer node.
 		const gateway = new Gateway();
-		await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 
 		// Get the network (channel) our contract is deployed to.
 		const network = await gateway.getNetwork(channelName);
@@ -185,11 +216,12 @@ exports.disburse_ewallet = async function(req, res, _next) {
 		const contract = network.getContract(contractName);
 
 		console.log("\nSubmit disburse wallet transaction");
-		if (remarks != undefined) {
-			await contract.submitTransaction("disburseWallet", walletId, amount, remarks);
-		} else {
-			await contract.submitTransaction("disburseWallet", walletId, amount);
-		}
+		await contract.submitTransaction(
+			"disburseWallet",
+			walletId,
+			amount,
+			remarks
+		);
 
 		// Disconnect from the gateway.
 		gateway.disconnect();
@@ -210,7 +242,7 @@ exports.disburse_ewallet = async function(req, res, _next) {
 	}
 };
 
-exports.show_ewallet_balance = async function(req, res, _next) {
+exports.show_ewallet_balance = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 
 	// Create a new file system based wallet for managing identities.
@@ -221,7 +253,11 @@ exports.show_ewallet_balance = async function(req, res, _next) {
 	try {
 		// Create a new gateway for connecting to our peer node.
 		const gateway = new Gateway();
-		await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 
 		// Get the network (channel) our contract is deployed to.
 		const network = await gateway.getNetwork(channelName);
@@ -230,13 +266,20 @@ exports.show_ewallet_balance = async function(req, res, _next) {
 		const contract = network.getContract(contractName);
 
 		console.log("\nGet wallet balance transaction");
-		let walletDetails = await contract.evaluateTransaction("showBalance", walletId);
+		let walletDetails = await contract.evaluateTransaction(
+			"showBalance",
+			walletId
+		);
 		walletDetails = JSON.parse(walletDetails.toString());
 		console.log(walletDetails);
 
 		// Disconnect from the gateway.
 		gateway.disconnect();
-		var response = { status: 1, message: "EWallet Balance", data: walletDetails };
+		var response = {
+			status: 1,
+			message: "EWallet Balance",
+			data: walletDetails,
+		};
 		console.log("\nTransaction success, send response: ", response);
 		res.send(response);
 	} catch (err) {
@@ -253,8 +296,9 @@ exports.show_ewallet_balance = async function(req, res, _next) {
 	}
 };
 
-exports.get_ewallet_statement = async function(req, res, _next) {
+exports.get_ewallet_statement = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
+	const txUserId = req.body.user_id;
 
 	// Create a new file system based wallet for managing identities.
 	const walletPath = path.join(process.cwd(), "/wallet");
@@ -264,7 +308,11 @@ exports.get_ewallet_statement = async function(req, res, _next) {
 	try {
 		// Create a new gateway for connecting to our peer node.
 		const gateway = new Gateway();
-		await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 
 		// Get the network (channel) our contract is deployed to.
 		const network = await gateway.getNetwork(channelName);
@@ -273,7 +321,12 @@ exports.get_ewallet_statement = async function(req, res, _next) {
 		const contract = network.getContract(contractName);
 
 		console.log("\nget wallet history transaction");
-		let statement = await contract.evaluateTransaction("getHistoryForWallet", walletId);
+		let statement = await contract.evaluateTransaction(
+			"getHistoryForWallet",
+			walletId,
+			txUserId
+		);
+		console.log(statement.toString());
 		statement = JSON.parse(statement.toString());
 		console.log(statement);
 
@@ -296,7 +349,7 @@ exports.get_ewallet_statement = async function(req, res, _next) {
 	}
 };
 
-exports.get_transaction_count_of_ewallet = async function(req, res, _next) {
+exports.get_transaction_count_of_ewallet = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 
 	// Create a new file system based wallet for managing identities.
@@ -307,7 +360,11 @@ exports.get_transaction_count_of_ewallet = async function(req, res, _next) {
 	try {
 		// Create a new gateway for connecting to our peer node.
 		const gateway = new Gateway();
-		await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 
 		// Get the network (channel) our contract is deployed to.
 		const network = await gateway.getNetwork(channelName);
@@ -316,7 +373,10 @@ exports.get_transaction_count_of_ewallet = async function(req, res, _next) {
 		const contract = network.getContract(contractName);
 
 		console.log("\nget Transaction Count Of Wallet " + walletId);
-		let count = await contract.evaluateTransaction("getTransactionCountOfWallet", walletId);
+		let count = await contract.evaluateTransaction(
+			"getTransactionCountOfWallet",
+			walletId
+		);
 		count = parseInt(count);
 		console.log(count);
 
@@ -339,9 +399,8 @@ exports.get_transaction_count_of_ewallet = async function(req, res, _next) {
 	}
 };
 
-exports.get_child_ids = async function(req, res, _next) {
-
-    const masterId = req.body.master_id;
+exports.get_child_ids = async function (req, res, _next) {
+	const masterId = req.body.master_id;
 
 	// Create a new file system based wallet for managing identities.
 	const walletPath = path.join(process.cwd(), "/wallet");
@@ -351,7 +410,11 @@ exports.get_child_ids = async function(req, res, _next) {
 	try {
 		// Create a new gateway for connecting to our peer node.
 		const gateway = new Gateway();
-		await gateway.connect(ccp, { wallet, identity: userId, discovery: gatewayDiscovery });
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
 
 		// Get the network (channel) our contract is deployed to.
 		const network = await gateway.getNetwork(channelName);
@@ -360,10 +423,13 @@ exports.get_child_ids = async function(req, res, _next) {
 		const contract = network.getContract(contractName);
 
 		console.log("\nget Transaction Count Of Wallet " + masterId);
-		let statement = await contract.evaluateTransaction("getChildIds", "{\"selector\":{\"tx_data\": {\"master_id\":\"" +masterId+ "\"} }}");
-        var count = JSON.parse(statement.toString());
-        console.log(count);
-        
+		let statement = await contract.evaluateTransaction(
+			"getChildIds",
+			'{"selector":{"tx_data": {"master_id":"' + masterId + '"} }}'
+		);
+		var count = JSON.parse(statement.toString());
+		console.log(count);
+
 		// Disconnect from the gateway.
 		gateway.disconnect();
 		var response = { status: 1, message: "Child Id", data: count };
@@ -381,5 +447,4 @@ exports.get_child_ids = async function(req, res, _next) {
 		}
 		res.send(error);
 	}
-
 };
