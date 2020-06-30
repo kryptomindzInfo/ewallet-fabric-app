@@ -26,10 +26,10 @@ router.post("/createEWallet", dapp.create_ewallet);
 router.post("/rechargeEWallet", dapp.recharge_ewallet);
 router.post("/transferBtwEWallets", dapp.transfer_btw_ewallets);
 router.post("/disburseEWallet", dapp.disburse_ewallet);
-router.POST("/showEWalletBalance", dapp.show_ewallet_balance);
-router.POST("/getEWalletStatement", dapp.get_ewallet_statement);
-router.POST(
+router.post("/showEWalletBalance", dapp.show_ewallet_balance);
+router.post("/getEWalletStatement", dapp.get_ewallet_statement);
+router.post(
 	"/getEWalletTransactionCount",
 	dapp.get_transaction_count_of_ewallet
 );
-router.POST("/getChildIds", dapp.get_child_ids);
+router.post("/getChildIds", dapp.get_child_ids);
