@@ -20,13 +20,15 @@ const ccpPath = path.join(process.cwd(), connection_file);
 const ccpJSON = fs.readFileSync(ccpPath, "utf8");
 const ccp = JSON.parse(ccpJSON);
 
+const WALLET_PATH = config.walletPath;
+
 exports.create_ewallet = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 	const type = req.body.type;
 	const remarks = req.body.remarks;
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 
@@ -78,7 +80,7 @@ exports.recharge_ewallet = async function (req, res, _next) {
 	const remarks = req.body.remarks;
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 
@@ -135,7 +137,7 @@ exports.transfer_btw_ewallets = async function (req, res, _next) {
 	console.log(req.body);
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 
@@ -196,7 +198,7 @@ exports.disburse_ewallet = async function (req, res, _next) {
 	const remarks = req.body.remarks;
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 
@@ -246,7 +248,7 @@ exports.show_ewallet_balance = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 
@@ -301,7 +303,7 @@ exports.get_ewallet_statement = async function (req, res, _next) {
 	const txUserId = req.body.user_id;
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 
@@ -353,7 +355,7 @@ exports.get_transaction_count_of_ewallet = async function (req, res, _next) {
 	const walletId = req.body.wallet_id;
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 
@@ -403,7 +405,7 @@ exports.get_child_ids = async function (req, res, _next) {
 	const masterId = req.body.master_id;
 
 	// Create a new file system based wallet for managing identities.
-	const walletPath = path.join(process.cwd(), "/wallet");
+	const walletPath = WALLET_PATH;
 	const wallet = new FileSystemWallet(walletPath);
 	console.log(`Wallet path: ${walletPath}`);
 

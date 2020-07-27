@@ -1,11 +1,12 @@
 {
-    "connection_file": "connection.json",
-    "appAdmin": "admin",
-    "appAdminSecret": "adminpw",
-    "orgMSPID": "SiliconValleyMSP",
-    "caName": "ca.siliconvalley.com",
-    "userName": "user1",
-    "channelName": "ewalletchannel",
-    "contractName": "ewallet-app",
-    "gatewayDiscovery": { "enabled": true, "asLocalhost": false }
+	"connection_file": "connection.json",
+	"appAdmin": "admin",
+	"appAdminSecret": "adminpw",
+	"orgMSPID": "SiliconValleyMSP",
+	"caName": "ca.siliconvalley.com",
+	"userName": "user1",
+	"channelName": "ewalletchannel",
+	"contractName": "ewallet-app",
+	"gatewayDiscovery": { "enabled": true, "asLocalhost": false },
+	"walletPath": "/var/app/wallet/"
 }
