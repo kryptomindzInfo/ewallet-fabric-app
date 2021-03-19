@@ -1,5 +1,6 @@
 "use strict";
 
+const { json } = require("body-parser");
 const { FileSystemWallet, Gateway } = require("fabric-network");
 const fs = require("fs");
 const path = require("path");
@@ -177,6 +178,76 @@ exports.transfer_btw_ewallets = async function (req, res, _next) {
 			status: 1,
 			message: "Transferred Successfully",
 			data: { master_id: masterId, child_id: childId },
+		};
+		console.log("\nTransaction success, send response: ", response);
+		res.send(response);
+	} catch (err) {
+		//print and return error
+		console.log(err);
+		var error = {};
+		if (err.message) {
+			error = { status: 0, message: err.message };
+		}
+		if (err.endorsements) {
+			error = { status: 0, message: err.endorsements[0].message };
+		}
+		res.send(error);
+	}
+};
+
+exports.multiple_transfers = async function (req, res, _next) {
+	const transfers = req.body.transfers;
+	let remarks = "";
+	let transferArray = transfers.map((elem) => {
+		if (elem.remarks) [(remarks = elem.remarks)];
+		let trans = [
+			elem.from_wallet,
+			elem.to_wallet,
+			elem.amount,
+			elem.master_id,
+			elem.child_id,
+			elem.sender_id,
+			elem.receiver_id,
+			elem.from_name,
+			elem.to_name,
+			remarks,
+		];
+		return JSON.stringify(trans);
+	});
+
+	// let transferArr = transferArray.map((element) => {
+	// 	return JSON.stringify(element);
+	// });
+
+	console.log(transferArray);
+
+	// Create a new file system based wallet for managing identities.
+	const walletPath = path.join(process.cwd(), "/wallet");
+	const wallet = new FileSystemWallet(walletPath);
+	console.log(`Wallet path: ${walletPath}`);
+
+	try {
+		// Create a new gateway for connecting to our peer node.
+		const gateway = new Gateway();
+		await gateway.connect(ccp, {
+			wallet,
+			identity: userId,
+			discovery: gatewayDiscovery,
+		});
+
+		// Get the network (channel) our contract is deployed to.
+		const network = await gateway.getNetwork(channelName);
+
+		// Get the contract from the network.
+		const contract = network.getContract(contractName);
+
+		console.log("\nsubmit transfer between wallets transaction");
+		await contract.submitTransaction("multipleTransfers", ...transferArray);
+		// Disconnect from the gateway.
+		gateway.disconnect();
+		var response = {
+			status: 1,
+			message: "Transferred Successfully",
 		};
 		console.log("\nTransaction success, send response: ", response);
 		res.send(response);

@@ -25,6 +25,7 @@ router.use(function (req, res, next) {
 router.post("/createEWallet", dapp.create_ewallet);
 router.post("/rechargeEWallet", dapp.recharge_ewallet);
 router.post("/transferBtwEWallets", dapp.transfer_btw_ewallets);
+router.post("/multipleTransfers", dapp.multiple_transfers);
 router.post("/disburseEWallet", dapp.disburse_ewallet);
 router.post("/showEWalletBalance", dapp.show_ewallet_balance);
 router.post("/getEWalletStatement", dapp.get_ewallet_statement);
